@@ -15,6 +15,7 @@ public class LightingManager : MonoBehaviour
 
     [SerializeField] bool useVirtualTime;
     [SerializeField, Range(0, 1)] float virtualTime;
+    [SerializeField, Range(0, 100)] float virtualTimeSpeed;
 
     DateTime time;
     ParticleSystem stars;
@@ -34,13 +35,14 @@ public class LightingManager : MonoBehaviour
 
         time.AddSeconds(Time.deltaTime);
         UpdateLighting();
-    }
 
+        virtualTime = (virtualTime + virtualTimeSpeed / 86400) % 1;
+    }
 
     private void UpdateLighting()
     {
         //Porcentaje del día, siendo 0 las 0:00:00 y 0,5 las 12:00:00
-        float timePercent = useVirtualTime ? virtualTime : time.Hour / 24.0f + time.Minute / (24.0f * 60) + time.Second / (24.0f * 3600);
+        float timePercent = GetTime();
         //Debug.Log("Porcentaje del dia: " + timePercent);
 
         //Set ambient and fog
@@ -90,5 +92,10 @@ public class LightingManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public float GetTime()
+    {
+        return useVirtualTime ? virtualTime : time.Hour / 24.0f + time.Minute / (24.0f * 60) + time.Second / (24.0f * 3600);
     }
 }
